@@ -199,7 +199,7 @@ public class MainScreen extends Canvas {
 			 * catch (Exception e) { e.printStackTrace(); } } });
 			 */
 			panel.setLayout(null);
-			setBounds(50, 50, 500, 500);
+			setBounds(40, 50, 500, 500);
 			// panel.add(this);
 			panel.setSize(500, 500);
 			// panel.setBackground(Color.black);;
