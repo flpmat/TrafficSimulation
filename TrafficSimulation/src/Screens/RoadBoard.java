@@ -4,17 +4,17 @@ package Screens;
 import java.io.Serializable;
 import java.util.HashMap;
 
-public class GameBoard implements Serializable{
+public class RoadBoard implements Serializable{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -8579051714176099269L;
 	public HashMap<String,Integer> scores;
-	public int boardSize;
-	public int[][] board;
-	public GameBoard(int size){
-		boardSize = size;
-		board = new int[boardSize][boardSize];
+	public int roadSize;
+	public int[][] road;
+	public RoadBoard(int size){
+		roadSize = size;
+		road = new int[roadSize][roadSize];
 	}
 	public void setScore(HashMap<String,Integer> scoreVar){
 	//	scores = Game.scores;
