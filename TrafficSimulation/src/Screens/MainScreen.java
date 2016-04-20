@@ -2,13 +2,9 @@ package Screens;
 
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.Frame;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Rectangle;
 
@@ -16,26 +12,24 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Ellipse2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.EventListener;
-import java.util.Timer;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 
-public class MainScreen extends Canvas {
+
+
+public class MainScreen extends Canvas implements KeyListener {
 
 	/**
 	 * 
@@ -43,12 +37,25 @@ public class MainScreen extends Canvas {
 	private static final long serialVersionUID = 1L;
 
 	private JFrame frame;
+	
+	private BufferStrategy strategy;
+
 
 	private DrawPanel panel = new DrawPanel();
 
 	private Image bgSpr;
 
-	private BufferStrategy strategy;
+	//whether keys are pressed
+	private boolean DOWN = false;
+	private boolean UP = false;
+	private boolean LEFT = false;
+	private boolean RIGHT = false;
+	
+	//current player xy coordinates
+	private static int playerX;
+	private static int playerY;
+	
+	static GameBoard map = new GameBoard(10);
 
 	/**
 	 * Launch the application.
@@ -59,19 +66,110 @@ public class MainScreen extends Canvas {
 
 	public static void main(String[] args) throws IOException,
 			InterruptedException {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
+		//EventQueue.invokeLater(new Runnable() {
+		//	public void run() {
+		//		try {
 					MainScreen window = new MainScreen();
 					window.frame.setVisible(true);
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+					window.road();
+		//		} catch (Exception e) {
+		//			e.printStackTrace();
+		//		}
+		//	}
+		//});
 	}
-
+	//ADD gameboard depois
+	public void road() throws IOException, InterruptedException{
+		createBufferStrategy(2);
+		strategy = getBufferStrategy();
+		
+			while(true){
+				Graphics2D drawing = (Graphics2D) strategy.getDrawGraphics();
+				drawing.setColor(Color.white);
+				//drawing.fillRect(0, 0, 60 * ((GameBoard)raft.RaftNode.getStateObject()).boardSize, 60 * ((GameBoard)raft.RaftNode.getStateObject()).boardSize + 50);
+				
+				logic();
+				//coinTimer++;
+				//if(coinTimer >= coinTimerLimit){
+				//	spawn(0,COIN);
+				//	coinTimer = 0;
+			//	}
+		//		scoreString = "";
+			//	for(Entry<String, Integer> entry:((GameBoard)raft.RaftNode.getStateObject()).scores.entrySet()){
+				//	scoreString = scoreString + String.format("%s: %d, ",entry.getKey(),entry.getValue()); 
+				//}
+			//	scores = ((GameBoard)raft.RaftNode.getStateObject()).scores;
+				
+				Thread.sleep(20);
+				
+			    render(drawing);
+			    drawing.setFont(new Font("TimesRoman", Font.PLAIN, 10));
+			    drawing.setColor(Color.red);
+				//drawing.drawString(scoreString, 10, 60 * ((GameBoard)raft.RaftNode.getStateObject()).boardSize + 10);
+			    drawing.setFont(new Font("TimesRoman", Font.PLAIN, 30));
+				//drawing.drawString(winner, 60*((GameBoard)raft.RaftNode.getStateObject()).boardSize/4, 60 * ((GameBoard)raft.RaftNode.getStateObject()).boardSize/2);
+				drawing.dispose();
+				strategy.show();
+				//debugging - uncomment if you want to see map + movement;
+			//	System.out.println(c);
+			//	c++;
+			//	printMap(mp);
+			}
+		}
+		
+		
+	
+	private void logic(){
+		// check if player needs to be moved
+		int x = 0;
+		int y = 0;
+		if(UP){
+			y -= 1;
+			UP = false;
+		}
+		if(DOWN){
+			y += 1;
+			DOWN = false;
+		}
+		if(LEFT){
+			x -= 1;
+			LEFT = false;
+		}
+		if(RIGHT){
+			x += 1;
+			RIGHT = false;
+		}
+		if((x != 0) || (y != 0)){
+			//save old positions
+			int oldX = playerX;
+			int oldY = playerY;
+			
+			// update new position
+			playerX += x;
+			playerY += y;
+			
+			System.out.printf("Old: %d,%d - New: %d,%d \n",oldX,oldY,playerX,playerY);
+			
+			// if player goes over boundaries, move to other side
+			if(playerX < 0){
+				playerX = map.boardSize + playerX;
+			}
+			if(playerX >= map.boardSize){
+				playerX = playerX - map.boardSize;
+			}
+			if(playerY < 0){
+				playerY = map.boardSize + playerY;
+			}
+			if(playerY >= map.boardSize){
+				playerY = playerY - map.boardSize;
+			}
+			//send or process instruction (note, coords are reversed)
+		//	raft.API.pushInstruction(new Instruction(playerY,playerX,PLAYER, oldY, oldX, raft.RaftNode.myAddress));
+		}
+	}
+	
+	
+	
 	public class BallComponent extends JComponent implements ActionListener {
 
 		/**
@@ -250,7 +348,10 @@ public class MainScreen extends Canvas {
 		frame.setBounds(100, 100, 950, 800);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
-
+		frame.add(this);
+		frame.addKeyListener(this);
+		addKeyListener(this);
+		
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
 
@@ -261,7 +362,7 @@ public class MainScreen extends Canvas {
 		// panel.setBounds(309, 74, 30, 30);
 		// panel.setPreferredSize(new Dimension(800, 420));
 
-		frame.getContentPane().add(panel);
+		//frame.getContentPane().add(panel);
 
 		// JLabel lblNewLabel = new JLabel("New label");
 		// lblNewLabel.setIcon(new
@@ -271,12 +372,12 @@ public class MainScreen extends Canvas {
 
 		// frame.createBufferStrategy(2);
 		// strategy = frame.getBufferStrategy();
-		panel.start();
-
+	//	panel.start();
+	
 	}
 
 	private void render(Graphics2D drawing) throws IOException {
-		// bgSpr = ImageIO.read(getClass().getResource("bg.jpg"));
+		bgSpr = ImageIO.read(getClass().getResource("4way.jpg"));
 		drawing.setColor(Color.black);
 
 		for (int i = 0; i < 10; i++) {
@@ -287,5 +388,47 @@ public class MainScreen extends Canvas {
 
 			}
 		}
+	}
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+				if(e.getKeyCode() == KeyEvent.VK_DOWN){
+					DOWN = true;
+				}
+				if(e.getKeyCode() == KeyEvent.VK_UP){
+					UP = true;
+				}
+				if(e.getKeyCode() == KeyEvent.VK_LEFT){
+					LEFT = true;
+				}
+				if(e.getKeyCode() == KeyEvent.VK_RIGHT){
+					RIGHT = true;
+				//	printMap(map);
+				}
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+				if(e.getKeyCode() == KeyEvent.VK_DOWN){
+					DOWN = false;
+				}
+				if(e.getKeyCode() == KeyEvent.VK_UP){
+					UP = false;
+				}
+				if(e.getKeyCode() == KeyEvent.VK_LEFT){
+					LEFT = false;
+				}
+				if(e.getKeyCode() == KeyEvent.VK_RIGHT){
+					RIGHT = false;
+				}
+		// TODO Auto-generated method stub
+		
 	}
 }
