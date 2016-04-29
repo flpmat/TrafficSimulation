@@ -1,5 +1,7 @@
 package Screens;
 
+import TrafficSimulatorAPI.Instruction;
+
 public class InstructionApplier {
 
 	static final int EMPTY = 0;
@@ -7,10 +9,9 @@ public class InstructionApplier {
 	static final int COIN = 2;
 	static final int NPLAYERS = 3;
 	
-	@Override
 	public Object ApplyInstruction(Object inst) {
 		Instruction Inst = (Instruction)inst;
-		
+		/*
 		//if spot is avail, place instructed item in spot
 		if(Game.map.board[Inst.x][Inst.y] == EMPTY){
 			Game.map.board[Inst.x][Inst.y] = Inst.newState;
@@ -41,7 +42,10 @@ public class InstructionApplier {
 				Game.map.board[Inst.oldx][Inst.oldy] = EMPTY;
 			}
 		}
-		raft.RaftNode.setStateObject(Game.map);
+		*/
+		
+		// THIS IS IMPORTANT TO REFRESH THE BOARD
+		//raft.RaftNode.setStateObject(Game.map);
 		return null;
 	}
 }

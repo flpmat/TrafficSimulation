@@ -9,4 +9,5 @@
 <fullyQualifiedTypeName name="javax.swing.JFrame"/>
 <fullyQualifiedTypeName name="java.awt.EventQueue"/>
 <fullyQualifiedTypeName name="java.util.Timer"/>
+<fullyQualifiedTypeName name="TrafficSimulatorAPI.Instruction"/>
 </qualifiedTypeNameHistroy>
