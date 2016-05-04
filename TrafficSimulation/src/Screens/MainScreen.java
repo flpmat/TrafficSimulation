@@ -42,7 +42,7 @@ public class MainScreen extends Canvas {
 
 
 
-	private DrawPanel panel = new DrawPanel();
+	//private DrawPanel panel = new DrawPanel();
 
 	/**
 	 * Launch the application.
@@ -69,162 +69,8 @@ public class MainScreen extends Canvas {
 		});
 	}
 
-	public class BallComponent extends JComponent implements ActionListener {
+	
 
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-
-		int id;
-		Rectangle r;
-		int xSpeed = 0;
-		int ySpeed = 1;
-
-		javax.swing.Timer tm = new javax.swing.Timer(5, this);
-
-		public BallComponent(int x, int y, int _id) {
-			 super();
-			setBounds(x, y, 10, 10);
-			id = _id;
-			r = new Rectangle(0,0,100,100);
-
-		}
-
-		public void paintComponent(Graphics g) {
-			Graphics2D g2 = (Graphics2D) g;
-
-			g2.setColor(Color.RED);
-			g2.fill(r);
-			g2.draw(r);
-			tm.start();
-		}
-
-		public void checkOverlap(BallComponent b2) throws InterruptedException {
-			
-			if (this.getBounds().intersects(b2.getBounds())){
-				System.out.println("Colidiu");
-				b2.stopY();
-			}
-			 //System.out.println(" me: " + getBounds());
-		//	System.out.println("you: " + b2.getBounds());
-
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			tick();
-			try {
-				// System.out.println(id);
-				if (id == 0)
-					checkOverlap(panel.shapes.get(id + 1));
-				else
-					checkOverlap(panel.shapes.get(id - 1));
-
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
-
-		public void moveLeft() {
-			xSpeed = -1;
-		}
-
-		public void moveRight() {
-			xSpeed = 1;
-		}
-
-		public void moveUp() {
-			ySpeed = -1;
-		}
-
-		public void moveDown() {
-			ySpeed = 1;
-		}
-
-		public void tick() {
-			int x = getX() + xSpeed;
-			int y = getY() + ySpeed;
-
-			if (y > 500 - 30 || y < 0 + 30)
-				ySpeed = -ySpeed;
-			y = y + ySpeed;
-
-			setLocation(x, y);
-
-			repaint();
-		}
-
-		public void stopY() {
-			ySpeed = 0;
-		}
-
-		public void stopX() {
-			xSpeed = 0;
-		}
-
-	}
-
-	public class DrawPanel extends JPanel {
-
-		/**
-		 * 
-		 */
-		ArrayList<BallComponent> shapes = new ArrayList<MainScreen.BallComponent>();
-
-		private static final long serialVersionUID = 1L;
-
-		// javax.swing.Timer tm = new javax.swing.Timer(5, this);
-
-		// int y = 500-30, velY = 1;
-		/*
-		 * public void paint(Graphics g) {
-		 * 
-		 * Graphics2D g2 = (Graphics2D) g;
-		 * 
-		 * super.paint(g); Rectangle r1 = new Rectangle(250, 200, 30, 30);
-		 * g2.setColor(Color.red); g2.fill(r1); Rectangle r2 = new
-		 * Rectangle(250, y+30, 30, 30); g2.setColor(Color.green); g2.fill(r2);
-		 * tm.start(); }
-		 */
-
-		public void start() throws IOException, InterruptedException {
-			/*
-			 * EventQueue.invokeLater(new Runnable() { public void run() { try {
-			 * MainScreen window = new MainScreen(); window.setVisible(true); }
-			 * catch (Exception e) { e.printStackTrace(); } } });
-			 */
-			panel.setLayout(null);
-			setBounds(40, 50, 500, 500);
-			// panel.add(this);
-			panel.setSize(500, 500);
-			// panel.setBackground(Color.black);;
-			panel.setVisible(true);
-
-			BufferedImage img = ImageIO
-					.read(getClass().getResource("road.png"));
-			ImageIcon icon = new ImageIcon(img);
-
-			JLabel jLBackgroundImage = new JLabel(icon);
-			jLBackgroundImage.setBounds(0, 0, 500, 500);
-			this.add(jLBackgroundImage, -1);
-
-			BallComponent b = new BallComponent(10, 40, 0);
-
-			shapes.add(b);
-			b.setVisible(true);
-			this.add(b, 0);
-
-			BallComponent b2 = new BallComponent(10, 150, 1);
-
-			shapes.add(b2);
-			b2.setVisible(true);
-			this.add(b2, 1);
-
-		}
-
-	}
 
 	/**
 	 * Create the application.
@@ -269,7 +115,7 @@ public class MainScreen extends Canvas {
 
 		// frame.createBufferStrategy(2);
 		// strategy = frame.getBufferStrategy();
-	//	panel.start();
+		//	panel.start();
 	
 	}
 

@@ -1,7 +1,5 @@
 package Screens;
 
-import TrafficSimulatorAPI.Instruction;
-
 public class InstructionApplier {
 
 	static final int EMPTY = 0;
@@ -11,6 +9,11 @@ public class InstructionApplier {
 	
 	public Object ApplyInstruction(Object inst) {
 		Instruction Inst = (Instruction)inst;
+		
+		
+		// HERE GOES THE LOGIC TO UPDATE THE BOARD WHICH IS THEN RENDERED
+		
+		
 		/*
 		//if spot is avail, place instructed item in spot
 		if(Game.map.board[Inst.x][Inst.y] == EMPTY){
@@ -45,7 +48,7 @@ public class InstructionApplier {
 		*/
 		
 		// THIS IS IMPORTANT TO REFRESH THE BOARD
-		//raft.RaftNode.setStateObject(Game.map);
+		// Board.newStateAvailable = true
 		return null;
 	}
 }

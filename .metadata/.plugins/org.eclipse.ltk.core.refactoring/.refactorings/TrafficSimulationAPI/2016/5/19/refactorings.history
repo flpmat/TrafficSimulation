@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Move element &apos;Instruction.java&apos; to &apos;TrafficSimulation/src/Screens&apos;&#x0A;- Original project: &apos;TrafficSimulationAPI&apos;&#x0A;- Destination element: &apos;TrafficSimulation/src/Screens&apos;&#x0A;- Original element: &apos;TrafficSimulationAPI.Instruction.java&apos;&#x0A;- Update references to refactored element" description="Move compilation unit" destination="=TrafficSimulation/src&lt;Screens" element1="/src&lt;TrafficSimulationAPI{Instruction.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.move" patterns="*" policy="org.eclipse.jdt.ui.moveResources" qualified="false" references="true" stamp="1462372533661" units="1" version="1.0"/>
+</session>

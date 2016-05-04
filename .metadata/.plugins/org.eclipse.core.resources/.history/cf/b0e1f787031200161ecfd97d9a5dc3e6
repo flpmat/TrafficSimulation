@@ -1,0 +1,10 @@
+package Screens;
+
+public class Car {
+	
+	int id;
+	Color color;
+	
+	
+
+}
