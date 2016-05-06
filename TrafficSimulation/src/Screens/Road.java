@@ -27,7 +27,7 @@ public class Road extends Canvas {
 
 	static final int PLAYER = 1;
 
-	static RoadBoard map = new RoadBoard(10);
+	static RoadBoard road = new RoadBoard(10);
 	private Image bgSpr;
 
 	private BufferStrategy strategy;
@@ -36,13 +36,14 @@ public class Road extends Canvas {
 
 	// Constructor.
 	public Road(RoadBoard r) throws InterruptedException, IOException {
+		road = r;
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(null);
-		setBounds(0, 0, 60 * r.roadSize, 60 * r.roadSize + 50);
+		setBounds(0, 0, 60 * r.roadSize, 60 * r.roadSize);
 
 		frame.add(this);
-		frame.setSize(60 * r.roadSize, 60 * r.roadSize + 50);
+		frame.setSize(60 * r.roadSize+50, 60 * r.roadSize+50);
 
 
 		frame.setVisible(true);
@@ -108,16 +109,25 @@ public class Road extends Canvas {
 		bgSpr = ImageIO.read(getClass().getResource("4way.jpg"));
 		drawing.setColor(Color.black);
 
-		for (int i = 0; i < 10; i++) {
-			for (int j = 0; j < 10; j++) {
-				int xpos = 60 * j;
-				int ypos = 60 * i;
-				drawing.drawImage(bgSpr, xpos, ypos, null);
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				int xpos = 60 * i;
+				int ypos = 60 * j;
+				//drawing.drawImage(bgSpr, xpos, ypos, null);
+				if ((i == 3 || i == 4) || (j == 3 || j == 4)){
+					System.out.println(xpos + " " + ypos);
+					drawing.setColor(Color.DARK_GRAY);
+					drawing.fillRect(xpos, ypos, 60,60);
+					drawing.setColor(new Color(25, 255,0));
+					drawing.drawOval(xpos + 30, ypos + 30, 10, 10);
+				}else{
+					drawing.setColor(Color.green);
+					drawing.fillRect(xpos, ypos, 60,60);
+				}
+				
+				
 
 			}
 		}
 	}
-
-	
-
 }
