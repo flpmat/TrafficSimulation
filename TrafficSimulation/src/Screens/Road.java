@@ -5,8 +5,12 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
@@ -16,6 +20,7 @@ import java.io.IOException;
 import java.util.Timer;
 
 import javax.imageio.ImageIO;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 public class Road extends Canvas {
@@ -25,6 +30,8 @@ public class Road extends Canvas {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	static final int[] position = { 4, 5, 5, 4, 5, 3, 4, 2, 4, 4, 4, 3, 3, 2, 2,
+			3, 2, 4, 3, 5, 3, 3, 3, 4 };
 	static final int PLAYER = 1;
 
 	static RoadBoard road = new RoadBoard(10);
@@ -43,8 +50,7 @@ public class Road extends Canvas {
 		setBounds(0, 0, 60 * r.roadSize, 60 * r.roadSize);
 
 		frame.add(this);
-		frame.setSize(60 * r.roadSize+50, 60 * r.roadSize+50);
-
+		frame.setSize(60 * r.roadSize + 50, 60 * r.roadSize + 50);
 
 		frame.setVisible(true);
 
@@ -93,41 +99,110 @@ public class Road extends Canvas {
 	/*
 	 * Responsible for rendering the board screen based on the RoadBoard.
 	 */
-	private void render(Graphics2D drawing) throws IOException {
-		//if newstate available
+	private void render(Graphics2D drawing) throws IOException  {
+		
+		
+		
+		
+		// if newstate available
 		// change to false, wait for next instruction
-		
-		
+
 		/*
-		 *  HERE THE CIRCLE SHAPE IS ADDED TO REPRESENT THE CAR
-		 *  
-		 *  AS AN INITIAL ITERACTION OF THE SIMULATOR, PLAIN COLOR MAY BE 
-		 *  USED TO REPRESENT THE CARS POSITION
+		 * HERE THE CIRCLE SHAPE IS ADDED TO REPRESENT THE CAR
+		 * 
+		 * AS AN INITIAL ITERACTION OF THE SIMULATOR, PLAIN COLOR MAY BE USED TO
+		 * REPRESENT THE CARS POSITION
 		 */
-		
-		
+		if(road.newStateAvailable){
+			BallComponent b = new BallComponent(10, 40, 0);
+			b.setVisible(true);
+			this.frame.add(b, 0);
+
+			for (int i = 0; i < 8; i++) {
+				for (int j = 0; j < 8; j++) {
+					int xpos = 60 * i;
+					int ypos = 60 * j;
+					// drawing.drawImage(bgSpr, xpos, ypos, null);
+					if ((i == 3 || i == 4) || (j == 3 || j == 4)) {
+						drawing.setColor(Color.DARK_GRAY);
+						drawing.fillRect(xpos, ypos, 60, 60);
+						drawing.setColor(new Color(25, 255, 0));
+						drawing.drawOval(xpos + 30, ypos + 30, 10, 10);
+					} else {
+						drawing.setColor(Color.green);
+						drawing.fillRect(xpos, ypos, 60, 60);
+					}
+
+				}
+			}
+			road.newStateAvailable = false;
+		}
 		bgSpr = ImageIO.read(getClass().getResource("4way.jpg"));
 		drawing.setColor(Color.black);
 
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				int xpos = 60 * i;
-				int ypos = 60 * j;
-				//drawing.drawImage(bgSpr, xpos, ypos, null);
-				if ((i == 3 || i == 4) || (j == 3 || j == 4)){
-					System.out.println(xpos + " " + ypos);
-					drawing.setColor(Color.DARK_GRAY);
-					drawing.fillRect(xpos, ypos, 60,60);
-					drawing.setColor(new Color(25, 255,0));
-					drawing.drawOval(xpos + 30, ypos + 30, 10, 10);
-				}else{
-					drawing.setColor(Color.green);
-					drawing.fillRect(xpos, ypos, 60,60);
-				}
-				
-				
-
-			}
-		}
+		
 	}
+	
+	
+	public class BallComponent extends JComponent implements ActionListener {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		int id;
+		Rectangle r;
+		int xSpeed = 0;
+		int ySpeed = 1;
+
+		javax.swing.Timer tm = new javax.swing.Timer(15, this);
+
+		public BallComponent(int x, int y, int _id) {
+			 super();
+			setBounds(x, y, 10, 10);
+			id = _id;
+			r = new Rectangle(0,0,100,100);
+
+		}
+
+		public void paintComponent(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g;
+
+			g2.setColor(Color.RED);
+			g2.fill(r);
+			g2.draw(r);
+			tm.start();
+		}
+
+	
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int x = getX() + xSpeed;
+			int y = getY() + ySpeed;
+
+			if (y > 500 - 30 || y < 0 + 30)
+				ySpeed = -ySpeed;
+			y = y + ySpeed;
+
+			setLocation(x, y);
+
+			repaint();
+			
+		}
+
+
+
+	
+
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 }

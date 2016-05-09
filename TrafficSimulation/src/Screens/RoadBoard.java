@@ -15,5 +15,5 @@ public class RoadBoard implements Serializable{
 		roadSize = size;
 		road = new int[roadSize][roadSize];
 	}
-	public boolean newStateAvailable;
+	public boolean newStateAvailable = true;
 }
