@@ -1,0 +1,20 @@
+package Screens;
+
+import java.awt.Color;
+
+public class Car {
+
+	int id;
+	Color color;
+	int oldPosX, oldPosY, currentPosX, currentPosY;
+
+	Car(Color color, int oldPosX, int oldPosY, 
+			int currentPosX, int currentPosY) {
+		this.color = color;
+		this.oldPosX = oldPosX;
+		this.oldPosY = oldPosY;
+		this.currentPosX = currentPosX;
+		this.currentPosY = currentPosY;
+
+	}
+}
