@@ -7,11 +7,11 @@ public class Car {
 	int id;
 	Color color;
 	// int oldPosX, oldPosY, currentPosX, currentPosY;
-	int oldPos, currentPos;
+	int currentPos, nextPosition;
 
-	Car(Color color, int oldPos, int currentPos) {
+	Car(Color color, int currentPos, int nextPositon) {
 		this.color = color;
-		this.oldPos = oldPos;
+		this.nextPosition = nextPositon;
 		// this.oldPosY = oldPosY;
 		this.currentPos = currentPos;
 		// this.currentPosY = currentPosY;

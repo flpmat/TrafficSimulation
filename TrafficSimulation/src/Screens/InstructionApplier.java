@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.Random;
 
+import javax.swing.text.Position;
+
 public class InstructionApplier {
 	// road positions go here
 	static final int EMPTY = 0;
@@ -13,18 +15,34 @@ public class InstructionApplier {
 
 	public Object ApplyInstruction(int[] inst) {
 		// Instruction Inst = (Instruction)inst;
-		HashMap<Integer, Car> cars = new HashMap<Integer, Car>();
 
 		// HERE GOES THE LOGIC TO UPDATE THE BOARD WHICH IS THEN RENDERED
 
 		Random generator = new Random();
 
 		for (int i = 0; i < inst.length; i += 2) {
-			// if(!cars.containsKey(inst[i])){
-			cars.putIfAbsent(inst[i],
-					new Car(new Color(generator.nextInt(255), generator.nextInt(255), generator.nextInt(255)), -1, i));
-			cars.get(inst[i]).oldPos = cars.get(inst[i]).currentPos;
-			cars.get(inst[i]).currentPos = i;
+			if (inst[i + 1] == 1) {
+				continue;
+			}
+			if (!Road.cars.containsKey(inst[i])) {
+				System.out.println("nao contem");
+				System.out.println(inst[i]);
+					Road.cars.put(
+							inst[i],
+							new Car(new Color(generator.nextInt(255), generator
+									.nextInt(255), generator.nextInt(255)), 12,
+									i / 2));
+	
+			} else {
+				System.out.println("pos " + i);
+				Road.cars.get(inst[i]).currentPos = Road.cars.get(inst[i]).nextPosition;
+				System.out.println("CURRENT:"
+						+ Road.position[Road.cars.get(inst[i]).currentPos*2 + 1]);
+				Road.cars.get(inst[i]).nextPosition = i/2;
+				System.out.println("NEXT:"
+						+ Road.position[Road.cars.get(inst[i]).currentPos*2 + 1]);
+			}
+			System.out.println(Road.cars.get(inst[i]).nextPosition);
 		}
 		Road.road.newStateAvailable = true;
 
