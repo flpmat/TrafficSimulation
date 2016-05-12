@@ -17,7 +17,7 @@ public class InstructionApplier {
 		// Instruction Inst = (Instruction)inst;
 
 		// HERE GOES THE LOGIC TO UPDATE THE BOARD WHICH IS THEN RENDERED
-
+		int initial = 12;
 		Random generator = new Random();
 
 		for (int i = 0; i < inst.length; i += 2) {
@@ -26,12 +26,79 @@ public class InstructionApplier {
 			}
 			if (!Road.cars.containsKey(inst[i])) {
 				System.out.println("nao contem");
-				System.out.println(inst[i]);
-					Road.cars.put(
-							inst[i],
-							new Car(new Color(generator.nextInt(255), generator
-									.nextInt(255), generator.nextInt(255)), 12,
-									i / 2));
+				 System.out.println(i);	
+				switch (i/2) {
+					
+					case 0:
+						initial = 12;
+						Road.cars.put(
+								inst[i],
+								new Car(new Color(generator.nextInt(255), generator
+										.nextInt(255), generator.nextInt(255)), initial,
+										i / 2));
+						
+						break;
+					case 1:
+						initial = 13;
+						Road.cars.put(
+								inst[i],
+								new Car(new Color(generator.nextInt(255), generator
+										.nextInt(255), generator.nextInt(255)), initial,
+										i / 2));
+						break;
+					case 2:
+						initial = 14;
+						Road.cars.put(
+								inst[i],
+								new Car(new Color(generator.nextInt(255), generator
+										.nextInt(255), generator.nextInt(255)), initial,
+										i / 2));
+						break;
+					case 3:
+						initial = 15;
+						Road.cars.put(
+								inst[i],
+								new Car(new Color(generator.nextInt(255), generator
+										.nextInt(255), generator.nextInt(255)), initial,
+										i / 2));
+						break;
+					case 6:
+						initial = 16;
+						System.out.println("erro aq");
+						Road.cars.put(
+								inst[i],
+								new Car(new Color(generator.nextInt(255), generator
+										.nextInt(255), generator.nextInt(255)), initial,
+										i / 2));
+						break;
+					case 7:
+						initial = 17;
+						Road.cars.put(
+								inst[i],
+								new Car(new Color(generator.nextInt(255), generator
+										.nextInt(255), generator.nextInt(255)), initial,
+										i / 2));
+						break;
+					case 8:
+						initial = 18;
+						Road.cars.put(
+								inst[i],
+								new Car(new Color(generator.nextInt(255), generator
+										.nextInt(255), generator.nextInt(255)), initial,
+										i / 2));
+						break;
+					case 9:
+						initial = 19;
+						Road.cars.put(
+								inst[i],
+								new Car(new Color(generator.nextInt(255), generator
+										.nextInt(255), generator.nextInt(255)), initial,
+										i / 2));
+						break;
+					default:
+						break;
+					}
+					
 	
 			} else {
 				System.out.println("pos " + i);

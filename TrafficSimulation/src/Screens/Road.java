@@ -35,14 +35,19 @@ public class Road extends Canvas {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	// TODO CHANGE POSITIONS OF EXIT TO ACTUAL EXIT PLACE. AFTER EXITING, DROP
+	// CAR AND SHAPE FROM THEIR RESPECTIVE LISTS.
+	// RE-CHECK POSITIONS.
+
 	static final int[] position = { 4, 5, 5, 4, 5, 3, 4, 2, 4, 4, 4, 3, 3, 2,
-			2, 3, 2, 4, 3, 5, 3, 3, 3, 4, 3, 8, 3, 7};
+			2, 3, 2, 4, 3, 5, 3, 3, 3, 4, 4, 8, 8, 4, 8, 3, 4, -1, 3, -1, -1, 3,
+			-1, 4, 3, 7 };
 	static final int PLAYER = 1;
 
 	static HashMap<Integer, Car> cars;
 	static HashMap<Integer, BallComponent> carShapes;
+	static HashMap<Integer, Boolean> completed;
 
-	
 	static RoadBoard road = new RoadBoard(10);
 	private Image bgSpr;
 
@@ -51,9 +56,6 @@ public class Road extends Canvas {
 	Graphics2D drawing;
 
 	private JFrame frame;
-	
-	
-	boolean completed = true;
 
 	// Constructor.
 	public Road(RoadBoard r) throws InterruptedException, IOException {
@@ -61,10 +63,10 @@ public class Road extends Canvas {
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(null);
-		setBounds(0, 0, 60 * r.roadSize, 60 * r.roadSize);
+		this.setBounds(0, 0, 60 * 10, 60 * 10);
 
 		frame.add(this);
-		frame.setSize(60 * r.roadSize + 50, 60 * r.roadSize + 50);
+		frame.setSize(60 * 10, 60 * 10);
 
 		frame.setVisible(true);
 
@@ -90,7 +92,7 @@ public class Road extends Canvas {
 					drawing.setColor(Color.DARK_GRAY);
 					drawing.fillRect(xpos, ypos, 60, 60);
 					drawing.setColor(new Color(25, 255, 0));
-				//	drawing.drawOval(xpos + 30, ypos + 30, 10, 10);
+					drawing.drawOval(xpos + 30, ypos + 30, 10, 10);
 				} else {
 					drawing.setColor(Color.green);
 					drawing.fillRect(xpos, ypos, 60, 60);
@@ -100,47 +102,61 @@ public class Road extends Canvas {
 		}
 		Road.cars = new HashMap<Integer, Car>();
 		carShapes = new HashMap<Integer, Road.BallComponent>();
+		completed = new HashMap<Integer, Boolean>();
 
 		new Thread(new Instructions()).start();
-		
+
 	}
 
-	
 	public class Instructions implements Runnable {
 
-	    public void run() {
-	    	Queue<int[]> teste = new LinkedList<int[]>();
+		public void run() {
+			Queue<int[]> teste = new LinkedList<int[]>();
+
+			for (Entry<Integer, Car> entry : cars.entrySet()) {
+				completed.put(entry.getKey(), true);
+
+			}
+
 			InstructionApplier inst = new InstructionApplier();
-			
-			
-			int[] teste1 ={ 0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,2,0};
-			int[] teste2 = { 0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,2,0};
-			int[] teste3 = { 0,1,0,1,0,1,0,1,0,1,0,1,2,0,0,1,0,1,0,1,0,1};
+
+			int[] teste1 = { 2, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 3, 0, 0, 1, 0,
+					1, 0, 1, 0, 1 };
+			int[] teste2 = { 0, 1, 0, 1, 0, 1, 0, 1, 2, 0, 0, 1, 0, 1, 0, 1, 0,
+					1, 0, 1, 3, 0 };
+			int[] teste3 = { 0, 1, 2, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 3, 0, 0,
+					1, 0, 1, 0, 1 };
+			int[] teste4 = { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 3,
+					0, 0, 1, 0, 1 };
+			int[] teste5 = { 0, 1, 0, 1, 0, 1, 2, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0,
+					1, 0, 1, 0, 1 };
 
 			teste.add(teste1);
 			teste.add(teste2);
 			teste.add(teste3);
+			// teste.add(teste4);
+			// teste.add(teste5);
 			boolean loop = false;
-			while(!teste.isEmpty()){
-				if(completed){
+			while (!teste.isEmpty()) {
+				if (!completed.containsValue(false)) {
 					System.out.println("inst");
 					inst.ApplyInstruction(teste.poll());
-					completed = false;
+					completed.clear();
+					for (Entry<Integer, Car> entry : cars.entrySet()) {
+						completed.put(entry.getKey(), false);
+					}
 					System.out.println("false");
 
 				}
-				if (!loop){
+				if (!loop) {
 					boardLoopTimer();
 					loop = true;
 				}
 			}
-	    }
-
-	   
+		}
 
 	}
-	
-	
+
 	private Timer timer;
 
 	public void boardLoopTimer() {
@@ -185,25 +201,32 @@ public class Road extends Canvas {
 
 		if (road.newStateAvailable) {
 			for (Entry<Integer, Car> entry : cars.entrySet()) {
-			//	if (!carShapes.containsKey(entry.getKey())) {
-					if(carShapes.containsKey(entry.getKey())){
-						carShapes.get(entry.getKey()).remove(carShapes.get(entry.getKey()));
-						carShapes.get(entry.getKey()).setVisible(false);
+				// if (!carShapes.containsKey(entry.getKey())) {
+				if (carShapes.containsKey(entry.getKey())) {
+					carShapes.get(entry.getKey()).remove(
+							carShapes.get(entry.getKey()));
+					carShapes.get(entry.getKey()).setVisible(false);
 
-					}
-					System.out.println("x " + position[2 * entry.getValue().currentPos]);
-					carShapes
-							.put(entry.getKey(),
-									new BallComponent(
-											position[2 * entry.getValue().currentPos] * 60,
-											position[2 * entry.getValue().currentPos + 1] * 60,
-											position[2 * entry.getValue().nextPosition] * 60,
-											position[2 * entry.getValue().nextPosition + 1] * 60,
-											Color.RED, drawing));
-					carShapes.get(entry.getKey()).setVisible(true);
-					carShapes.get(entry.getKey()).setIgnoreRepaint(true);
-					this.frame.add(carShapes.get(entry.getKey()), 0);
-			//	}
+				}
+				System.out.println("x "
+						+ position[2 * entry.getValue().currentPos]);
+				System.out.println("y "
+						+ position[2 * entry.getValue().currentPos + 1]);
+				carShapes
+						.put(entry.getKey(),
+								new BallComponent(
+										entry.getKey(),
+										entry.getValue().currentPos,
+										entry.getValue().nextPosition,
+										position[2 * entry.getValue().currentPos] * 60,
+										position[2 * entry.getValue().currentPos + 1] * 60,
+										position[2 * entry.getValue().nextPosition] * 60,
+										position[2 * entry.getValue().nextPosition + 1] * 60,
+										entry.getValue().color, drawing));
+				carShapes.get(entry.getKey()).setVisible(true);
+				carShapes.get(entry.getKey()).setIgnoreRepaint(true);
+				this.frame.add(carShapes.get(entry.getKey()), 0);
+				// }
 			}
 
 			// carShapes.put(1, new BallComponent(20, 30, 1, drawing));
@@ -232,32 +255,37 @@ public class Road extends Canvas {
 		private static final long serialVersionUID = 1L;
 
 		Rectangle r;
-		int nextPositionX, nextPositionY, currentPosX, currentPosY;
+		int key, currentPosition, nextPosition, nextPositionX, nextPositionY,
+				currentPosX, currentPosY;
 
-		int xSpeed = 0;
+		int xSpeed = 1;
 		int ySpeed = 1;
 		Color color;
 
-		javax.swing.Timer tm = new javax.swing.Timer(20, this);
+		javax.swing.Timer tm = new javax.swing.Timer(10, this);
 
-		public BallComponent(int currentPosX, int currentPosY,
-				int nextPositionX, int nextPositionY, Color color,
-				Graphics2D drawing) {
-			super();			
-			setBounds(currentPosX + 30, currentPosY, 20, 20);
+		public BallComponent(int key, int currentPosition, int nextPosition,
+				int currentPosX, int currentPosY, int nextPositionX,
+				int nextPositionY, Color color, Graphics2D drawing) {
+			super();
+			setBounds(currentPosX + 30, currentPosY + 20, 20, 20);
 			this.color = color;
 			r = new Rectangle(0, 0, 50, 50);
+			this.key = key;
+			this.currentPosition = currentPosition;
+			this.nextPosition = nextPosition;
 			this.currentPosX = currentPosX;
 			this.currentPosY = currentPosY;
-			this.nextPositionX = nextPositionX;
-			this.nextPositionY = nextPositionY;
+			this.nextPositionX = nextPositionX + 30;
+			this.nextPositionY = nextPositionY + 20;
 
+			System.out.println("inicializou");
 
 		}
 
 		public void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g;
-			g2.setColor(Color.RED);
+			g2.setColor(color);
 			g2.fill(r);
 			g2.draw(r);
 			tm.start();
@@ -268,20 +296,148 @@ public class Road extends Canvas {
 			int x = getX();
 			int y = getY();
 
-			y = y - ySpeed;
+			if (currentPosition == 0 || currentPosition == 3
+					|| currentPosition == 12) {
+				y = y - 3;
+				if (getY() != nextPositionY) {
+					setLocation(x, y);
+					repaint();
+				} else {
+					tm.stop();
+					completed.put(key, true);
+				}
+			}
+			if (currentPosition == 6 || currentPosition == 9
+					|| currentPosition == 16) {
 
-			if (getY() != nextPositionY) {
-				setLocation(x, y);
-				repaint();
-			} else {
-				tm.stop();
-				System.out.println("true");
-				completed = true;
-
-				
+				y = y + 3;
+				if (getY() != nextPositionY) {
+					// System.out.println("NEXT POS: " + (nextPositionY - 40));
+					// System.out.println("Y: " + getY());
+					setLocation(x, y);
+					repaint();
+				} else {
+					tm.stop();
+					completed.put(key, true);
+				}
+			}
+			if (currentPosition == 1 || currentPosition == 8
+					|| currentPosition == 18) {
+				x = x + 3;
+				if (getX() != nextPositionX) {
+					setLocation(x, y);
+					repaint();
+				} else {
+					tm.stop();
+					completed.put(key, true);
+				}
 
 			}
+			if (currentPosition == 2 || currentPosition == 7
+					|| currentPosition == 14) {
+				x = x - 3;
+				if (getX() != nextPositionX) {
+					setLocation(x, y);
+					repaint();
+				} else {
+					tm.stop();
+					completed.put(key, true);
+				}
 
+			}
+			if (currentPosition == 4) {
+				if (nextPosition == 1) {
+					this.nextPositionX = position[13*2] * 60;
+					this.nextPositionY = position[13*2 + 1] * 60;
+					x = x + 3;
+					if (getX() != nextPositionX) {
+						setLocation(x, y);
+						repaint();
+					} else {
+						tm.stop();
+						completed.put(key, true);
+					}
+				} else {
+					y = y - ySpeed;
+					if (getY() != nextPositionY) {
+						setLocation(x, y);
+						repaint();
+					} else {
+						tm.stop();
+						completed.put(key, true);
+					}
+				}
+			}
+			if (currentPosition == 5) {
+				if (nextPosition == 10) {
+					x = x - xSpeed;
+					if (getX() != nextPositionX) {
+						setLocation(x, y);
+						repaint();
+					} else {
+						tm.stop();
+						completed.put(key, true);
+					}
+				} else {
+					this.nextPositionX = position[15*2] * 60;
+					this.nextPositionY = position[15*2 + 1] * 60;
+					y = y - 3;
+					if (getY() != nextPositionY) {
+						setLocation(x, y);
+						repaint();
+					} else {
+						tm.stop();
+						completed.put(key, true);
+					}
+				}
+			}
+			if (currentPosition == 10) {
+				if (nextPosition == 7) {
+					this.nextPositionX = position[17*2] * 60;
+					this.nextPositionY = position[17*2 + 1] * 60;
+					x = x - 3;
+					if (getX() != nextPositionX) {
+						setLocation(x, y);
+						repaint();
+					} else {
+						tm.stop();
+						completed.put(key, true);
+					}
+				} else {
+					y = y + ySpeed;
+					if (getY() != nextPositionY) {
+						setLocation(x, y);
+						repaint();
+					} else {
+						tm.stop();
+						completed.put(key, true);
+					}
+				}
+			}
+			if (currentPosition == 11) {
+				if (nextPosition == 4) {
+					x = x + xSpeed;
+					if (getX() != nextPositionX) {
+						setLocation(x, y);
+						repaint();
+					} else {
+						tm.stop();
+						completed.put(key, true);
+					}
+				} else {
+					this.nextPositionX = position[19*2] * 60;
+					this.nextPositionY = position[19*2 + 1] * 60;
+					y = y + 3;
+					if (getY() != nextPositionY) {
+						setLocation(x, y);
+						repaint();
+					} else {
+						tm.stop();
+						completed.put(key, true);
+
+					}
+				}
+			}
 		}
 	}
 
