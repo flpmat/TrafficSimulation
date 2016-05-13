@@ -40,8 +40,8 @@ public class Road extends Canvas {
 	// RE-CHECK POSITIONS.
 
 	static final int[] position = { 4, 5, 5, 4, 5, 3, 4, 2, 4, 4, 4, 3, 3, 2,
-			2, 3, 2, 4, 3, 5, 3, 3, 3, 4, 4, 8, 8, 4, 8, 3, 4, -1, 3, -1, -1, 3,
-			-1, 4, 3, 7 };
+			2, 3, 2, 4, 3, 5, 3, 3, 3, 4, 4, 7, 8, 4, 7, 3, 4, -1, 3, 0, -1, 3,
+			-1, 4, 3, 8 };
 	static final int PLAYER = 1;
 
 	static HashMap<Integer, Car> cars;
@@ -63,10 +63,11 @@ public class Road extends Canvas {
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(null);
-		this.setBounds(0, 0, 60 * 10, 60 * 10);
+		this.setBounds(0, 0, 60 * 8, 60 * 8);
 
 		frame.add(this);
-		frame.setSize(60 * 10, 60 * 10);
+		frame.setSize(60 * 8, 60 * 8 +20);
+		frame.setResizable(false);
 
 		frame.setVisible(true);
 
@@ -83,11 +84,13 @@ public class Road extends Canvas {
 		setIgnoreRepaint(true);
 
 		drawing = (Graphics2D) strategy.getDrawGraphics();
-		for (int i = 0; i < 8; i++) {
+		bgSpr = ImageIO.read(getClass().getResource("road.png"));
+		drawing.drawImage(bgSpr, 0, 0, null);
+		/*for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				int xpos = 60 * i;
 				int ypos = 60 * j;
-				// drawing.drawImage(bgSpr, xpos, ypos, null);
+			   
 				if ((i == 3 || i == 4) || (j == 3 || j == 4)) {
 					drawing.setColor(Color.DARK_GRAY);
 					drawing.fillRect(xpos, ypos, 60, 60);
@@ -99,7 +102,7 @@ public class Road extends Canvas {
 				}
 
 			}
-		}
+		}*/
 		Road.cars = new HashMap<Integer, Car>();
 		carShapes = new HashMap<Integer, Road.BallComponent>();
 		completed = new HashMap<Integer, Boolean>();
