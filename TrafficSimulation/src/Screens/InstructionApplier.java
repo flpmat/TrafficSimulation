@@ -10,7 +10,6 @@ public class InstructionApplier {
 
 	public Object ApplyInstruction(int[] inst) {
 
-		// HERE GOES THE LOGIC TO UPDATE THE BOARD WHICH IS THEN RENDERED
 		int initial = 12;
 		Random generator = new Random();
 
