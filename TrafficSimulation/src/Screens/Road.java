@@ -39,9 +39,9 @@ public class Road extends Canvas {
 	 * Road position. From 0 to 10, actual positions. From 11 to 18, exit
 	 * positions.
 	 */
-	static final int[] position = { 4, 5, 5, 4, 5, 3, 4, 2, 4, 4, 4, 3, 3, 2,
-			2, 3, 2, 4, 3, 5, 3, 3, 3, 4, 4, 7, 8, 4, 7, 3, 4, -1, 3, 0, -1, 3,
-			-1, 4, 3, 8 };
+	static final int[] position = { 4, 5, 5, 4, 5, 3, 4, 2, 4, 4, 4, 3, 3, 2, 2,
+			3, 2, 4, 3, 5, 3, 3, 3, 4, 4, 7, 8, 4, 7, 3, 4, -1, 3, 0, -1, 3, -1,
+			4, 3, 8 };
 
 	static HashMap<Integer, Car> cars;
 	static HashMap<Integer, ShapeComponent> carShapes;
@@ -73,32 +73,14 @@ public class Road extends Canvas {
 		frame.setVisible(true);
 		setIgnoreRepaint(true);
 
-		/*
-		 * frame.addWindowListener(new WindowAdapter() {
-		 * 
-		 * @Override public void windowClosing(WindowEvent we) {
-		 * 
-		 * System.exit(0); } });
-		 */
-
 		createBufferStrategy(2);
 		strategy = getBufferStrategy();
 
 		drawing = (Graphics2D) strategy.getDrawGraphics();
 		bgSpr = ImageIO.read(getClass().getResource("road.png"));
 		drawing.drawImage(bgSpr, 0, 0, null);
-		/*
-		 * for (int i = 0; i < 8; i++) { for (int j = 0; j < 8; j++) { int xpos
-		 * = 60 * i; int ypos = 60 * j;
-		 * 
-		 * if ((i == 3 || i == 4) || (j == 3 || j == 4)) {
-		 * drawing.setColor(Color.DARK_GRAY); drawing.fillRect(xpos, ypos, 60,
-		 * 60); drawing.setColor(new Color(25, 255, 0)); drawing.drawOval(xpos +
-		 * 30, ypos + 30, 10, 10); } else { drawing.setColor(Color.green);
-		 * drawing.fillRect(xpos, ypos, 60, 60); }
-		 * 
-		 * } }
-		 */
+
+
 		Road.cars = new HashMap<Integer, Car>();
 		carShapes = new HashMap<Integer, ShapeComponent>();
 		completed = new HashMap<Integer, Boolean>();
@@ -107,6 +89,9 @@ public class Road extends Canvas {
 
 	}
 
+	/*
+	 * This thread guarantees each instruction is executed in a FIFO fashion.
+	 */
 	public class Instructions implements Runnable {
 
 		public void run() {
@@ -119,16 +104,16 @@ public class Road extends Canvas {
 
 			InstructionApplier inst = new InstructionApplier();
 
-			int[] teste1 = { 2, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 3, 0, 0, 1, 0,
-					1, 0, 1, 0, 1 };
-			int[] teste2 = { 0, 1, 0, 1, 0, 1, 0, 1, 2, 0, 0, 1, 0, 1, 0, 1, 0,
-					1, 0, 1, 3, 0 };
-			int[] teste3 = { 0, 1, 2, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 3, 0, 0,
-					1, 0, 1, 0, 1 };
-			int[] teste4 = { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 3,
-					0, 0, 1, 0, 1 };
-			int[] teste5 = { 0, 1, 0, 1, 0, 1, 2, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0,
-					1, 0, 1, 0, 1 };
+			int[] teste1 = { 2, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 3, 0, 0, 1, 0, 1,
+					0, 1, 0, 1 };
+			int[] teste2 = { 0, 1, 0, 1, 0, 1, 0, 1, 2, 0, 0, 1, 0, 1, 0, 1, 0, 1,
+					0, 1, 3, 0 };
+			int[] teste3 = { 0, 1, 2, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 3, 0, 0, 1,
+					0, 1, 0, 1 };
+			int[] teste4 = { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 3, 0,
+					0, 1, 0, 1 };
+			int[] teste5 = { 0, 1, 0, 1, 0, 1, 2, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+					0, 1, 0, 1 };
 
 			teste.add(teste1);
 			teste.add(teste2);
@@ -183,33 +168,31 @@ public class Road extends Canvas {
 		 * Every time a new state is available, the shapes are rendered on the
 		 * screen. A new state is available when a new instruction is pushed. A
 		 * single render() call handles all the animation of any shape from the
-		 * actual position to the final position
+		 * actual position to the final position (as defined by the current
+		 * instruction.
 		 */
 
 		if (road.newStateAvailable) {
 			for (Entry<Integer, Car> entry : cars.entrySet()) {
 				// if (!carShapes.containsKey(entry.getKey())) {
 				if (carShapes.containsKey(entry.getKey())) {
-					carShapes.get(entry.getKey()).remove(
-							carShapes.get(entry.getKey()));
+					carShapes.get(entry.getKey())
+							.remove(carShapes.get(entry.getKey()));
 					carShapes.get(entry.getKey()).setVisible(false);
 
 				}
-				System.out.println("x "
-						+ position[2 * entry.getValue().currentPos]);
-				System.out.println("y "
-						+ position[2 * entry.getValue().currentPos + 1]);
-				carShapes
-						.put(entry.getKey(),
-								new ShapeComponent(
-										entry.getKey(),
-										entry.getValue().currentPos,
-										entry.getValue().nextPosition,
-										position[2 * entry.getValue().currentPos] * 60,
-										position[2 * entry.getValue().currentPos + 1] * 60,
-										position[2 * entry.getValue().nextPosition] * 60,
-										position[2 * entry.getValue().nextPosition + 1] * 60,
-										entry.getValue().color, drawing));
+				System.out.println(
+						"x " + position[2 * entry.getValue().currentPos]);
+				System.out.println(
+						"y " + position[2 * entry.getValue().currentPos + 1]);
+				carShapes.put(entry.getKey(), new ShapeComponent(entry.getKey(),
+						entry.getValue().currentPos,
+						entry.getValue().nextPosition,
+						position[2 * entry.getValue().currentPos] * 60,
+						position[2 * entry.getValue().currentPos + 1] * 60,
+						position[2 * entry.getValue().nextPosition] * 60,
+						position[2 * entry.getValue().nextPosition + 1] * 60,
+						entry.getValue().color, drawing));
 				carShapes.get(entry.getKey()).setVisible(true);
 				carShapes.get(entry.getKey()).setIgnoreRepaint(true);
 				this.frame.add(carShapes.get(entry.getKey()), 0);
@@ -245,10 +228,12 @@ public class Road extends Canvas {
 		public ShapeComponent(int key, int currentPosition, int nextPosition,
 				int currentPosX, int currentPosY, int nextPositionX,
 				int nextPositionY, Color color, Graphics2D drawing) {
+
 			super();
+			r = new Rectangle(0, 0, 50, 50);
+
 			setBounds(currentPosX + 30, currentPosY + 20, 20, 20);
 			this.color = color;
-			r = new Rectangle(0, 0, 50, 50);
 			this.key = key;
 			this.currentPosition = currentPosition;
 			this.nextPosition = nextPosition;
@@ -256,9 +241,6 @@ public class Road extends Canvas {
 			this.currentPosY = currentPosY;
 			this.nextPositionX = nextPositionX + 30;
 			this.nextPositionY = nextPositionY + 20;
-
-			System.out.println("inicializou");
-
 		}
 
 		public void paintComponent(Graphics g) {
@@ -266,6 +248,7 @@ public class Road extends Canvas {
 			g2.setColor(color);
 			g2.fill(r);
 			g2.draw(r);
+		
 			tm.start();
 		}
 
