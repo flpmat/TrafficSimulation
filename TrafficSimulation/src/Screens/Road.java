@@ -35,76 +35,72 @@ public class Road extends Canvas {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	// TODO CHANGE POSITIONS OF EXIT TO ACTUAL EXIT PLACE. AFTER EXITING, DROP
-	// CAR AND SHAPE FROM THEIR RESPECTIVE LISTS.
-	// RE-CHECK POSITIONS.
-
+	/*
+	 * Road position. From 0 to 10, actual positions. From 11 to 18, exit
+	 * positions.
+	 */
 	static final int[] position = { 4, 5, 5, 4, 5, 3, 4, 2, 4, 4, 4, 3, 3, 2,
 			2, 3, 2, 4, 3, 5, 3, 3, 3, 4, 4, 7, 8, 4, 7, 3, 4, -1, 3, 0, -1, 3,
 			-1, 4, 3, 8 };
-	static final int PLAYER = 1;
 
 	static HashMap<Integer, Car> cars;
-	static HashMap<Integer, BallComponent> carShapes;
+	static HashMap<Integer, ShapeComponent> carShapes;
 	static HashMap<Integer, Boolean> completed;
 
 	static RoadBoard road = new RoadBoard(10);
+
 	private Image bgSpr;
-
 	private BufferStrategy strategy;
-
-	Graphics2D drawing;
+	private Graphics2D drawing;
 
 	private JFrame frame;
 
-	// Constructor.
+	private Timer timer;
+
 	public Road(RoadBoard r) throws InterruptedException, IOException {
+
 		road = r;
+
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(null);
 		this.setBounds(0, 0, 60 * 8, 60 * 8);
 
 		frame.add(this);
-		frame.setSize(60 * 8, 60 * 8 +20);
+		frame.setSize(60 * 8, 60 * 8 + 20);
 		frame.setResizable(false);
 
 		frame.setVisible(true);
+		setIgnoreRepaint(true);
 
-		frame.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent we) {
-
-				System.exit(0);
-			}
-		});
+		/*
+		 * frame.addWindowListener(new WindowAdapter() {
+		 * 
+		 * @Override public void windowClosing(WindowEvent we) {
+		 * 
+		 * System.exit(0); } });
+		 */
 
 		createBufferStrategy(2);
 		strategy = getBufferStrategy();
-		setIgnoreRepaint(true);
 
 		drawing = (Graphics2D) strategy.getDrawGraphics();
 		bgSpr = ImageIO.read(getClass().getResource("road.png"));
 		drawing.drawImage(bgSpr, 0, 0, null);
-		/*for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				int xpos = 60 * i;
-				int ypos = 60 * j;
-			   
-				if ((i == 3 || i == 4) || (j == 3 || j == 4)) {
-					drawing.setColor(Color.DARK_GRAY);
-					drawing.fillRect(xpos, ypos, 60, 60);
-					drawing.setColor(new Color(25, 255, 0));
-					drawing.drawOval(xpos + 30, ypos + 30, 10, 10);
-				} else {
-					drawing.setColor(Color.green);
-					drawing.fillRect(xpos, ypos, 60, 60);
-				}
-
-			}
-		}*/
+		/*
+		 * for (int i = 0; i < 8; i++) { for (int j = 0; j < 8; j++) { int xpos
+		 * = 60 * i; int ypos = 60 * j;
+		 * 
+		 * if ((i == 3 || i == 4) || (j == 3 || j == 4)) {
+		 * drawing.setColor(Color.DARK_GRAY); drawing.fillRect(xpos, ypos, 60,
+		 * 60); drawing.setColor(new Color(25, 255, 0)); drawing.drawOval(xpos +
+		 * 30, ypos + 30, 10, 10); } else { drawing.setColor(Color.green);
+		 * drawing.fillRect(xpos, ypos, 60, 60); }
+		 * 
+		 * } }
+		 */
 		Road.cars = new HashMap<Integer, Car>();
-		carShapes = new HashMap<Integer, Road.BallComponent>();
+		carShapes = new HashMap<Integer, ShapeComponent>();
 		completed = new HashMap<Integer, Boolean>();
 
 		new Thread(new Instructions()).start();
@@ -160,8 +156,6 @@ public class Road extends Canvas {
 
 	}
 
-	private Timer timer;
-
 	public void boardLoopTimer() {
 		timer = new Timer();
 		timer.schedule(new boardLoop(), 0, 1000 / 30);
@@ -169,9 +163,7 @@ public class Road extends Canvas {
 
 	private class boardLoop extends java.util.TimerTask {
 		public void run() {
-			// drawing = (Graphics2D) strategy.getDrawGraphics();
 			drawing.setColor(Color.white);
-
 			try {
 				render();
 			} catch (IOException e) {
@@ -179,11 +171,6 @@ public class Road extends Canvas {
 				e.printStackTrace();
 			}
 			strategy.show();
-			// debugging - uncomment if you want to see map + movement;
-			// System.out.println(c);
-			// c++;
-			// printMap(mp);
-
 		}
 	}
 
@@ -192,14 +179,11 @@ public class Road extends Canvas {
 	 */
 	private boolean render() throws IOException {
 
-		// if newstate available
-		// change to false, wait for next instruction
-
 		/*
-		 * HERE THE CIRCLE SHAPE IS ADDED TO REPRESENT THE CAR
-		 * 
-		 * AS AN INITIAL ITERACTION OF THE SIMULATOR, PLAIN COLOR MAY BE USED TO
-		 * REPRESENT THE CARS POSITION
+		 * Every time a new state is available, the shapes are rendered on the
+		 * screen. A new state is available when a new instruction is pushed. A
+		 * single render() call handles all the animation of any shape from the
+		 * actual position to the final position
 		 */
 
 		if (road.newStateAvailable) {
@@ -217,7 +201,7 @@ public class Road extends Canvas {
 						+ position[2 * entry.getValue().currentPos + 1]);
 				carShapes
 						.put(entry.getKey(),
-								new BallComponent(
+								new ShapeComponent(
 										entry.getKey(),
 										entry.getValue().currentPos,
 										entry.getValue().nextPosition,
@@ -232,25 +216,16 @@ public class Road extends Canvas {
 				// }
 			}
 
-			// carShapes.put(1, new BallComponent(20, 30, 1, drawing));
-			// carShapes.put(2, new BallComponent(50, 60, 2, drawing));
-			// /
-			// carShapes.get(1).setVisible(true);
-			// carShapes.get(1).setIgnoreRepaint(true);
-			// this.frame.add(carShapes.get(1), 0);
-			// / carShapes.get(2).setVisible(true);
-			// carShapes.get(2).setIgnoreRepaint(true);
-			// this.frame.add(carShapes.get(2), 0);
 			road.newStateAvailable = false;
 		}
 		return true;
 
-		// bgSpr = ImageIO.read(getClass().getResource("4way.jpg"));
-		// drawing.setColor(Color.black);
-
 	}
 
-	public class BallComponent extends JComponent implements ActionListener {
+	/*
+	 * Animation is done here.
+	 */
+	public class ShapeComponent extends JComponent implements ActionListener {
 
 		/**
 		 * 
@@ -267,7 +242,7 @@ public class Road extends Canvas {
 
 		javax.swing.Timer tm = new javax.swing.Timer(10, this);
 
-		public BallComponent(int key, int currentPosition, int nextPosition,
+		public ShapeComponent(int key, int currentPosition, int nextPosition,
 				int currentPosX, int currentPosY, int nextPositionX,
 				int nextPositionY, Color color, Graphics2D drawing) {
 			super();
@@ -315,8 +290,6 @@ public class Road extends Canvas {
 
 				y = y + 3;
 				if (getY() != nextPositionY) {
-					// System.out.println("NEXT POS: " + (nextPositionY - 40));
-					// System.out.println("Y: " + getY());
 					setLocation(x, y);
 					repaint();
 				} else {
@@ -350,8 +323,8 @@ public class Road extends Canvas {
 			}
 			if (currentPosition == 4) {
 				if (nextPosition == 1) {
-					this.nextPositionX = position[13*2] * 60;
-					this.nextPositionY = position[13*2 + 1] * 60;
+					this.nextPositionX = position[13 * 2] * 60;
+					this.nextPositionY = position[13 * 2 + 1] * 60;
 					x = x + 3;
 					if (getX() != nextPositionX) {
 						setLocation(x, y);
@@ -382,8 +355,8 @@ public class Road extends Canvas {
 						completed.put(key, true);
 					}
 				} else {
-					this.nextPositionX = position[15*2] * 60;
-					this.nextPositionY = position[15*2 + 1] * 60;
+					this.nextPositionX = position[15 * 2] * 60;
+					this.nextPositionY = position[15 * 2 + 1] * 60;
 					y = y - 3;
 					if (getY() != nextPositionY) {
 						setLocation(x, y);
@@ -396,8 +369,8 @@ public class Road extends Canvas {
 			}
 			if (currentPosition == 10) {
 				if (nextPosition == 7) {
-					this.nextPositionX = position[17*2] * 60;
-					this.nextPositionY = position[17*2 + 1] * 60;
+					this.nextPositionX = position[17 * 2] * 60;
+					this.nextPositionY = position[17 * 2 + 1] * 60;
 					x = x - 3;
 					if (getX() != nextPositionX) {
 						setLocation(x, y);
@@ -428,8 +401,8 @@ public class Road extends Canvas {
 						completed.put(key, true);
 					}
 				} else {
-					this.nextPositionX = position[19*2] * 60;
-					this.nextPositionY = position[19*2 + 1] * 60;
+					this.nextPositionX = position[19 * 2] * 60;
+					this.nextPositionY = position[19 * 2 + 1] * 60;
 					y = y + 3;
 					if (getY() != nextPositionY) {
 						setLocation(x, y);
