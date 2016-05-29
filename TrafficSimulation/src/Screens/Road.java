@@ -2,22 +2,16 @@ package Screens;
 
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.Frame;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+
 import java.awt.image.BufferStrategy;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
@@ -64,7 +58,7 @@ public class Road extends Canvas {
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(null);
-		this.setBounds(0, 0, 60 * 8, 60 * 8);
+		this.setBounds(0, 0, 480, 483);
 
 		frame.add(this);
 		frame.setSize(60 * 8, 60 * 8 + 20);
@@ -78,12 +72,14 @@ public class Road extends Canvas {
 
 		drawing = (Graphics2D) strategy.getDrawGraphics();
 		bgSpr = ImageIO.read(getClass().getResource("road.png"));
-		drawing.drawImage(bgSpr, 0, 0, null);
+		drawing.drawImage(bgSpr, -10, -10, null);
 
 
 		Road.cars = new HashMap<Integer, Car>();
 		carShapes = new HashMap<Integer, ShapeComponent>();
 		completed = new HashMap<Integer, Boolean>();
+		HashMap<Integer, Boolean> bottleneckP0 = new Hs
+			
 
 		new Thread(new Instructions()).start();
 
@@ -232,7 +228,7 @@ public class Road extends Canvas {
 			super();
 			r = new Rectangle(0, 0, 50, 50);
 
-			setBounds(currentPosX + 30, currentPosY + 20, 20, 20);
+			setBounds(currentPosX + 20, currentPosY + 20, 20, 20);
 			this.color = color;
 			this.key = key;
 			this.currentPosition = currentPosition;
