@@ -2,16 +2,15 @@ package Screens;
 
 import java.awt.Canvas;
 import java.awt.Color;
-
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.awt.image.BufferStrategy;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
@@ -33,13 +32,14 @@ public class Road extends Canvas {
 	 * Road position. From 0 to 10, actual positions. From 11 to 18, exit
 	 * positions.
 	 */
-	static final int[] position = { 4, 5, 5, 4, 5, 3, 4, 2, 4, 4, 4, 3, 3, 2, 2,
+	static final double[] position = { 4, 5, 5, 4, 5, 3, 4, 2, 4, 4, 4, 3, 3, 2, 2,
 			3, 2, 4, 3, 5, 3, 3, 3, 4, 4, 7, 8, 4, 7, 3, 4, -1, 3, 0, -1, 3, -1,
-			4, 3, 8 };
+			4, 3, 8, 4, 5.5, 4, 6 };
 
 	static HashMap<Integer, Car> cars;
 	static HashMap<Integer, ShapeComponent> carShapes;
 	static HashMap<Integer, Boolean> completed;
+	static Queue<Integer> bottleneckP0;
 
 	static RoadBoard road = new RoadBoard(10);
 
@@ -78,8 +78,7 @@ public class Road extends Canvas {
 		Road.cars = new HashMap<Integer, Car>();
 		carShapes = new HashMap<Integer, ShapeComponent>();
 		completed = new HashMap<Integer, Boolean>();
-		HashMap<Integer, Boolean> bottleneckP0 = new Hs
-			
+		bottleneckP0 = new LinkedList<Integer>();
 
 		new Thread(new Instructions()).start();
 
@@ -92,7 +91,6 @@ public class Road extends Canvas {
 
 		public void run() {
 			Queue<int[]> teste = new LinkedList<int[]>();
-
 			for (Entry<Integer, Car> entry : cars.entrySet()) {
 				completed.put(entry.getKey(), true);
 
@@ -102,9 +100,9 @@ public class Road extends Canvas {
 
 			int[] teste1 = { 2, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 3, 0, 0, 1, 0, 1,
 					0, 1, 0, 1 };
-			int[] teste2 = { 0, 1, 0, 1, 0, 1, 0, 1, 2, 0, 0, 1, 0, 1, 0, 1, 0, 1,
+			int[] teste2 = { 4, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
 					0, 1, 3, 0 };
-			int[] teste3 = { 0, 1, 2, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 3, 0, 0, 1,
+			int[] teste3 = { 5, 0, 0, 1, 0, 1, 0, 1, 2, 0, 0, 1, 0, 1, 3, 0, 0, 1,
 					0, 1, 0, 1 };
 			int[] teste4 = { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 3, 0,
 					0, 1, 0, 1 };
@@ -212,7 +210,8 @@ public class Road extends Canvas {
 		private static final long serialVersionUID = 1L;
 
 		Rectangle r;
-		int key, currentPosition, nextPosition, nextPositionX, nextPositionY,
+		int key;
+		double currentPosition, nextPosition, nextPositionX, nextPositionY,
 				currentPosX, currentPosY;
 
 		int xSpeed = 1;
@@ -221,14 +220,14 @@ public class Road extends Canvas {
 
 		javax.swing.Timer tm = new javax.swing.Timer(10, this);
 
-		public ShapeComponent(int key, int currentPosition, int nextPosition,
-				int currentPosX, int currentPosY, int nextPositionX,
-				int nextPositionY, Color color, Graphics2D drawing) {
+		public ShapeComponent(int key, double currentPosition, double nextPosition,
+				double currentPosX, double currentPosY, double nextPositionX,
+				double nextPositionY, Color color, Graphics2D drawing) {
 
 			super();
 			r = new Rectangle(0, 0, 50, 50);
 
-			setBounds(currentPosX + 20, currentPosY + 20, 20, 20);
+			setBounds((int)currentPosX + 20, (int)currentPosY + 20, 20, 20);
 			this.color = color;
 			this.key = key;
 			this.currentPosition = currentPosition;
@@ -256,12 +255,13 @@ public class Road extends Canvas {
 			if (currentPosition == 0 || currentPosition == 3
 					|| currentPosition == 12) {
 				y = y - 3;
-				if (getY() != nextPositionY) {
+				if (getY() != nextPositionY ) {
 					setLocation(x, y);
 					repaint();
 				} else {
 					tm.stop();
 					completed.put(key, true);
+					cars.get(key).currentPos = cars.get(key).nextPosition;
 				}
 			}
 			if (currentPosition == 6 || currentPosition == 9
