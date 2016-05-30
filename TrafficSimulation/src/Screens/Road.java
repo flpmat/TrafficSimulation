@@ -34,7 +34,7 @@ public class Road extends Canvas {
 	 */
 	static final double[] position = { 4, 5, 5, 4, 5, 3, 4, 2, 4, 4, 4, 3, 3, 2, 2,
 			3, 2, 4, 3, 5, 3, 3, 3, 4, 4, 7, 8, 4, 7, 3, 4, -1, 3, 0, -1, 3, -1,
-			4, 3, 8, 4, 5.5, 4, 6 };
+			4, 3, 8, 4, 5, 4, 6 };
 
 	static HashMap<Integer, Car> cars;
 	static HashMap<Integer, ShapeComponent> carShapes;
