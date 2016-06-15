@@ -32,14 +32,15 @@ public class Road extends Canvas {
 	 * Road position. From 0 to 10, actual positions. From 11 to 18, exit
 	 * positions.
 	 */
-	static final double[] position = { 4, 5, 5, 4, 5, 3, 4, 2, 4, 4, 4, 3, 3, 2, 2,
-			3, 2, 4, 3, 5, 3, 3, 3, 4, 4, 7, 8, 4, 7, 3, 4, -1, 3, 0, -1, 3, -1,
-			4, 3, 8, 4, 5, 4, 6 };
+	static final double[] position = { 4, 5, 5, 4, 5, 3, 4, 2, 4, 4, 4, 3, 3,
+			2, 2, 3, 2, 4, 3, 5, 3, 3, 3, 4, 4, 7, 8, 4, 7, 3, 4, -1, 3, 0, -1,
+			3, -1, 4, 3, 8, 4, 5.5, 4, 6 };
 
 	static HashMap<Integer, Car> cars;
 	static HashMap<Integer, ShapeComponent> carShapes;
 	static HashMap<Integer, Boolean> completed;
 	static Queue<Integer> bottleneckP0;
+	static Queue<Integer> bottleneckP0Wait;
 
 	static RoadBoard road = new RoadBoard(10);
 
@@ -74,11 +75,11 @@ public class Road extends Canvas {
 		bgSpr = ImageIO.read(getClass().getResource("road.png"));
 		drawing.drawImage(bgSpr, -10, -10, null);
 
-
 		Road.cars = new HashMap<Integer, Car>();
 		carShapes = new HashMap<Integer, ShapeComponent>();
 		completed = new HashMap<Integer, Boolean>();
 		bottleneckP0 = new LinkedList<Integer>();
+		bottleneckP0Wait = new LinkedList<Integer>();
 
 		new Thread(new Instructions()).start();
 
@@ -98,21 +99,21 @@ public class Road extends Canvas {
 
 			InstructionApplier inst = new InstructionApplier();
 
-			int[] teste1 = { 2, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 3, 0, 0, 1, 0, 1,
-					0, 1, 0, 1 };
-			int[] teste2 = { 4, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
-					0, 1, 3, 0 };
-			int[] teste3 = { 5, 0, 0, 1, 0, 1, 0, 1, 2, 0, 0, 1, 0, 1, 3, 0, 0, 1,
-					0, 1, 0, 1 };
-			int[] teste4 = { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 3, 0,
-					0, 1, 0, 1 };
-			int[] teste5 = { 0, 1, 0, 1, 0, 1, 2, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
-					0, 1, 0, 1 };
+			int[] teste1 = { 2, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 3, 0, 0, 1, 0,
+					1, 0, 1, 0, 1 };
+			int[] teste2 = { 4, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
+					1, 0, 1, 3, 0 };
+			int[] teste3 = { 5, 0, 0, 1, 0, 1, 0, 1, 2, 0, 0, 1, 0, 1, 3, 0, 0,
+					1, 0, 1, 0, 1 };
+			int[] teste4 = { 0, 1, 0, 1, 0, 1, 0, 1, 2, 0, 0, 1, 0, 1, 0, 1, 3,
+					0, 0, 1, 0, 1 };
+			int[] teste5 = { 0, 1, 0, 1, 0, 1, 2, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0,
+					1, 0, 1, 0, 1 };
 
 			teste.add(teste1);
 			teste.add(teste2);
 			teste.add(teste3);
-			// teste.add(teste4);
+			 //teste.add(teste4);
 			// teste.add(teste5);
 			boolean loop = false;
 			while (!teste.isEmpty()) {
@@ -170,23 +171,26 @@ public class Road extends Canvas {
 			for (Entry<Integer, Car> entry : cars.entrySet()) {
 				// if (!carShapes.containsKey(entry.getKey())) {
 				if (carShapes.containsKey(entry.getKey())) {
-					carShapes.get(entry.getKey())
-							.remove(carShapes.get(entry.getKey()));
+					carShapes.get(entry.getKey()).remove(
+							carShapes.get(entry.getKey()));
 					carShapes.get(entry.getKey()).setVisible(false);
 
 				}
-				System.out.println(
-						"x " + position[2 * entry.getValue().currentPos]);
-				System.out.println(
-						"y " + position[2 * entry.getValue().currentPos + 1]);
-				carShapes.put(entry.getKey(), new ShapeComponent(entry.getKey(),
-						entry.getValue().currentPos,
-						entry.getValue().nextPosition,
-						position[2 * entry.getValue().currentPos] * 60,
-						position[2 * entry.getValue().currentPos + 1] * 60,
-						position[2 * entry.getValue().nextPosition] * 60,
-						position[2 * entry.getValue().nextPosition + 1] * 60,
-						entry.getValue().color, drawing));
+				System.out.println("x "
+						+ position[2 * entry.getValue().currentPos]);
+				System.out.println("y "
+						+ position[2 * entry.getValue().currentPos + 1]);
+				carShapes
+						.put(entry.getKey(),
+								new ShapeComponent(
+										entry.getKey(),
+										entry.getValue().currentPos,
+										entry.getValue().nextPosition,
+										position[2 * entry.getValue().currentPos] * 60,
+										position[2 * entry.getValue().currentPos + 1] * 60,
+										position[2 * entry.getValue().nextPosition] * 60,
+										position[2 * entry.getValue().nextPosition + 1] * 60,
+										entry.getValue().color, drawing));
 				carShapes.get(entry.getKey()).setVisible(true);
 				carShapes.get(entry.getKey()).setIgnoreRepaint(true);
 				this.frame.add(carShapes.get(entry.getKey()), 0);
@@ -220,14 +224,15 @@ public class Road extends Canvas {
 
 		javax.swing.Timer tm = new javax.swing.Timer(10, this);
 
-		public ShapeComponent(int key, double currentPosition, double nextPosition,
-				double currentPosX, double currentPosY, double nextPositionX,
-				double nextPositionY, Color color, Graphics2D drawing) {
+		public ShapeComponent(int key, double currentPosition,
+				double nextPosition, double currentPosX, double currentPosY,
+				double nextPositionX, double nextPositionY, Color color,
+				Graphics2D drawing) {
 
 			super();
 			r = new Rectangle(0, 0, 50, 50);
 
-			setBounds((int)currentPosX + 20, (int)currentPosY + 20, 20, 20);
+			setBounds((int) currentPosX + 20, (int) currentPosY + 20, 20, 20);
 			this.color = color;
 			this.key = key;
 			this.currentPosition = currentPosition;
@@ -243,7 +248,7 @@ public class Road extends Canvas {
 			g2.setColor(color);
 			g2.fill(r);
 			g2.draw(r);
-		
+
 			tm.start();
 		}
 
@@ -253,9 +258,10 @@ public class Road extends Canvas {
 			int y = getY();
 
 			if (currentPosition == 0 || currentPosition == 3
-					|| currentPosition == 12) {
+					|| currentPosition == 12 || currentPosition == 20
+					|| currentPosition == 21) {
 				y = y - 3;
-				if (getY() != nextPositionY ) {
+				if (getY() != nextPositionY) {
 					setLocation(x, y);
 					repaint();
 				} else {

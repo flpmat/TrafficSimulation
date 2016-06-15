@@ -6,10 +6,12 @@ import java.util.Random;
 import java.util.Map.Entry;
 
 import javax.swing.text.Position;
+import javax.swing.text.StyledEditorKit.BoldAction;
 
 import org.omg.CORBA.Current;
 
 public class InstructionApplier {
+	static int p0ocuppier = -1;
 
 	public Object ApplyInstruction(int[] inst) {
 
@@ -25,14 +27,20 @@ public class InstructionApplier {
 					if (Road.bottleneckP0.size() == 0) {
 						System.out.println("pos 40");
 						pos = 40;
+						Road.bottleneckP0.add(inst[i]);
 					} else if (Road.bottleneckP0.size() == 1) {
+						System.out.println("ADICIONOU 21");
 						pos = 42;
+						Road.bottleneckP0.add(inst[i]);
+					} else if (Road.bottleneckP0.size() == 2) {
+						pos = 44;
+						Road.bottleneckP0.add(inst[i]);
+					} else {
+						pos = 46;
+						Road.bottleneckP0Wait.add(inst[i]);
 					}
 
 					System.out.println("ocupado");
-
-					Road.bottleneckP0.add(inst[i]);
-
 				}
 			}
 
@@ -42,62 +50,72 @@ public class InstructionApplier {
 				switch (i / 2) {
 
 				case 0:
+					p0ocuppier = inst[i];
 					initial = 12;
-					Road.cars.put(inst[i],
-							new Car(new Color(generator.nextInt(255),
-									generator.nextInt(255),
-									generator.nextInt(255)), initial, pos / 2));
+					Road.cars.put(
+							inst[i],
+							new Car(new Color(generator.nextInt(255), generator
+									.nextInt(255), generator.nextInt(255)),
+									initial, pos / 2));
+					System.out.println("posicao adicionada: " + pos/2);
 
 					break;
 				case 1:
 					initial = 13;
-					Road.cars.put(inst[i],
-							new Car(new Color(generator.nextInt(255),
-									generator.nextInt(255),
-									generator.nextInt(255)), initial, pos / 2));
+					Road.cars.put(
+							inst[i],
+							new Car(new Color(generator.nextInt(255), generator
+									.nextInt(255), generator.nextInt(255)),
+									initial, pos / 2));
 					break;
 				case 2:
 					initial = 14;
-					Road.cars.put(inst[i],
-							new Car(new Color(generator.nextInt(255),
-									generator.nextInt(255),
-									generator.nextInt(255)), initial, pos / 2));
+					Road.cars.put(
+							inst[i],
+							new Car(new Color(generator.nextInt(255), generator
+									.nextInt(255), generator.nextInt(255)),
+									initial, pos / 2));
 					break;
 				case 3:
 					initial = 15;
-					Road.cars.put(inst[i],
-							new Car(new Color(generator.nextInt(255),
-									generator.nextInt(255),
-									generator.nextInt(255)), initial, pos / 2));
+					Road.cars.put(
+							inst[i],
+							new Car(new Color(generator.nextInt(255), generator
+									.nextInt(255), generator.nextInt(255)),
+									initial, pos / 2));
 					break;
 				case 6:
 					initial = 16;
 					System.out.println("erro aq");
-					Road.cars.put(inst[i],
-							new Car(new Color(generator.nextInt(255),
-									generator.nextInt(255),
-									generator.nextInt(255)), initial, pos / 2));
+					Road.cars.put(
+							inst[i],
+							new Car(new Color(generator.nextInt(255), generator
+									.nextInt(255), generator.nextInt(255)),
+									initial, pos / 2));
 					break;
 				case 7:
 					initial = 17;
-					Road.cars.put(inst[i],
-							new Car(new Color(generator.nextInt(255),
-									generator.nextInt(255),
-									generator.nextInt(255)), initial, pos / 2));
+					Road.cars.put(
+							inst[i],
+							new Car(new Color(generator.nextInt(255), generator
+									.nextInt(255), generator.nextInt(255)),
+									initial, pos / 2));
 					break;
 				case 8:
 					initial = 18;
-					Road.cars.put(inst[i],
-							new Car(new Color(generator.nextInt(255),
-									generator.nextInt(255),
-									generator.nextInt(255)), initial, pos / 2));
+					Road.cars.put(
+							inst[i],
+							new Car(new Color(generator.nextInt(255), generator
+									.nextInt(255), generator.nextInt(255)),
+									initial, pos / 2));
 					break;
 				case 9:
 					initial = 19;
-					Road.cars.put(inst[i],
-							new Car(new Color(generator.nextInt(255),
-									generator.nextInt(255),
-									generator.nextInt(255)), initial, pos / 2));
+					Road.cars.put(
+							inst[i],
+							new Car(new Color(generator.nextInt(255), generator
+									.nextInt(255), generator.nextInt(255)),
+									initial, pos / 2));
 					break;
 				default:
 					break;
@@ -105,37 +123,62 @@ public class InstructionApplier {
 
 			} else {
 				System.out.println("pos " + pos);
-				Road.cars.get(inst[i]).currentPos = Road.cars
-						.get(inst[i]).nextPosition;
-				
-				Road.cars.get(inst[i]).nextPosition = pos / 2;
-				
-			}
+				Road.cars.get(inst[i]).currentPos = Road.cars.get(inst[i]).nextPosition;
 
-			/*
-			 * EVERYTIME A CAR IS MOVED FROM 0 TO 4, THE CARS INCLUDED IN THE
-			 * QUEUE WILL MOVE FORWARD (THEIR POSITIONS IS UPDATED SO WHEN THE
-			 * NEXT RENDERING TAKES PLACE THEY'RE MOVED
-			 * 
-			 */
-			if (Road.cars.get(inst[i]).currentPos == 0
-					&& Road.cars.get(inst[i]).nextPosition == 8) {
-				Road.cars.get(Road.bottleneckP0.element()).currentPos = Road.cars
-						.get(Road.bottleneckP0.element()).nextPosition;
-				Road.cars.get(Road.bottleneckP0.element()).nextPosition = 0;
-				
-				Road.bottleneckP0.remove();
-				
-				// REMOVE DOIS E ALTERA SUAS POSICOES PARA SEREM MOSTRADOS NO BOARD
-				// THE BOTTLENECK'S SIZE IS BOTTLENECKP0.SIZE + 2
-				Road.cars.get(Road.bottleneckP0.element()).currentPos = Road.cars
-						.get(Road.bottleneckP0.element()).nextPosition;
-				Road.cars.get(Road.bottleneckP0.element()).nextPosition = 0;
-				
-				for (Entry<Integer, Car> bottleneck : Road.bottleneckP0.entrySet()) {
-				
+				Road.cars.get(inst[i]).nextPosition = pos / 2;
+
+				/*
+				 * EVERYTIME A CAR IS MOVED FROM 0 TO 4, THE CARS INCLUDED IN
+				 * THE QUEUE WILL MOVE FORWARD (THEIR POSITIONS IS UPDATED SO
+				 * WHEN THE NEXT RENDERING TAKES PLACE THEY'RE MOVED
+				 */
+				if (Road.cars.get(inst[i]).currentPos == 0
+						&& Road.cars.get(inst[i]).nextPosition == 4) {
+					for (Entry<Integer, Car> entry : Road.cars.entrySet()) {
+						System.out.println("CURRENT POSITION: "
+								+ entry.getValue().currentPos);
+						if (entry.getValue().currentPos == 20) {
+							System.out.println("MOVE PRIMEIRO");
+
+							Road.cars.get(Road.bottleneckP0.element()
+									.intValue()).currentPos = 20;
+							Road.cars.get(Road.bottleneckP0.element()).nextPosition = 0;
+							Road.bottleneckP0.poll();
+							break;
+						}
+					}
+					for (Entry<Integer, Car> entry : Road.cars.entrySet()) {
+
+						if (entry.getValue().currentPos == 21) {
+							System.out.println("MOVE SEGUNDO");
+
+							Road.cars.get(Road.bottleneckP0.element()
+									.intValue()).currentPos = 21;
+							Road.cars.get(Road.bottleneckP0.element()).nextPosition = 20;
+							break;
+						}
+					}
+					for (Entry<Integer, Car> entry : Road.cars.entrySet()) {
+
+						if (entry.getValue().currentPos == 22) {
+							Road.cars.get(Road.bottleneckP0.element()
+									.intValue()).currentPos = 22;
+							Road.cars.get(Road.bottleneckP0.element()).nextPosition = 21;
+
+							if (Road.bottleneckP0.size() < 3) {
+								Road.cars.get(Road.bottleneckP0Wait.element()
+										.intValue()).currentPos = 23;
+								Road.cars.get(Road.bottleneckP0Wait.element()).nextPosition = 22;
+								Road.bottleneckP0Wait.poll();
+							}
+							continue;
+
+						}
+					}
+
+				}
+
 			}
-			
 
 			System.out.println(Road.cars.get(inst[i]).nextPosition);
 		}
