@@ -174,7 +174,6 @@ public class InstructionApplier {
 							Road.cars.get(Road.bottleneckP0.element()).nextPosition = 21;
 
 							if (Road.bottleneckP0.size() < 3) {
-								System.out.println("Trocando from P0Wait to P0");
 								Road.cars.get(Road.bottleneckP0Wait.element()
 										.intValue()).currentPos = 23;
 								Road.cars.get(Road.bottleneckP0Wait.element()).nextPosition = 22;

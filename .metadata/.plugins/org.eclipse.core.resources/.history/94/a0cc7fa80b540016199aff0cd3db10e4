@@ -158,14 +158,6 @@ public class InstructionApplier {
 							break;
 						}
 					}
-					/*
-					 *  EVERYTIME A CAR IN THE BOTTLENECKP0 CHANGES POSITION, 
-					 *  THE BOTTLENECKWAIT IS CHANGED BY DROPPING THE CAR IN THE FIRST
-					 *  POSITION WHICH IS THEN ADDED TO THE BOTTLENECKP0 QUEUE.]
-					 *  NOTE: ONCE THIS LOGIC IS FULLY WORKING, BOTTLENECK QUEUES MUST
-					 *  BE ADDED TO THE OTHER ENTERING POSITIONS.
-					 */
-					
 					for (Entry<Integer, Car> entry : Road.cars.entrySet()) {
 
 						if (entry.getValue().currentPos == 22) {
@@ -174,7 +166,6 @@ public class InstructionApplier {
 							Road.cars.get(Road.bottleneckP0.element()).nextPosition = 21;
 
 							if (Road.bottleneckP0.size() < 3) {
-								System.out.println("Trocando from P0Wait to P0");
 								Road.cars.get(Road.bottleneckP0Wait.element()
 										.intValue()).currentPos = 23;
 								Road.cars.get(Road.bottleneckP0Wait.element()).nextPosition = 22;
