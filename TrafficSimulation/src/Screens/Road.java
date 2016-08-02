@@ -105,7 +105,7 @@ public class Road extends Canvas {
 					1, 0, 1, 3, 0 };
 			int[] teste3 = { 5, 0, 0, 1, 0, 1, 0, 1, 2, 0, 0, 1, 0, 1, 3, 0, 0,
 					1, 0, 1, 0, 1 };
-			int[] teste4 = { 0, 1, 0, 1, 0, 1, 0, 1, 2, 0, 0, 1, 0, 1, 0, 1, 3,
+			int[] teste4 = { 0, 1, 2, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 3,
 					0, 0, 1, 0, 1 };
 			int[] teste5 = { 0, 1, 0, 1, 0, 1, 2, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0,
 					1, 0, 1, 0, 1 };
@@ -113,7 +113,7 @@ public class Road extends Canvas {
 			teste.add(teste1);
 			teste.add(teste2);
 			teste.add(teste3);
-			 //teste.add(teste4);
+			teste.add(teste4);
 			// teste.add(teste5);
 			boolean loop = false;
 			while (!teste.isEmpty()) {
